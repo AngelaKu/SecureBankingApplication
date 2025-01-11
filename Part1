@@ -1,0 +1,173 @@
+import hashlib
+import json
+import os
+import getpass
+import time
+import re
+def hash_password(password):
+  return hashlib.sha256(password.encode()).hexdigest()
+def hash_password(password):
+    # Indent the return statement to include it within the function body
+    return hashlib.sha256(password.encode()).hexdigest()
+def validate_username(username):
+  return re.match(r"^[a-zA-Z0-9]{5,15}$", username) is not None
+def validate_password(password):
+  return (len(password) >= 8 and
+    re.search(r"[A-Z]", password) and
+    re.search(r"[a-z]", password) and
+    re.search(r"[0-9]", password) and
+    re.search(r"[\W_]", password))
+def save_data():
+  #Using to define save_data
+    print("Data saved!")
+
+def create_account(username, password):
+    users[username] = {
+        'password': hash_password(password),
+        'balance': 0.0,
+        'login_attempts': 0,
+        'is_blocked': False,
+        'blocked_until': None
+    }
+    save_data()
+    print(f"Account created successfully for {username}.")
+
+# Defining Users
+users = {}
+
+# 2 hash_password(password)
+def hash_password(password):
+    return password[::-1]
+
+# 1 create_account(username, password)
+username = "angela_ku"
+password = "password123"
+create_account(username, password)
+def deposit(username):
+  ...
+  users[username]['balance'] += amount
+  log_transaction(username, f"Deposit: +${amount:.2f}")
+  save_data()
+  print(f"${amount:.2f} deposited successfully.")
+def withdraw(username):
+  ...
+  users[username]['balance'] -= amount
+  log_transaction(username, f"Withdraw: -${amount:.2f}")
+  save_data()
+  print(f"${amount:.2f} withdrawn successfully.")
+def check_balance(username):
+  print(f"Current balance: ${users[username]['balance']:.2f}")
+def transfer(username):
+  ...
+  users[username]['balance'] -= amount
+  users[recipient]['balance'] += amount
+  log_transaction(username, f"Transfer to {recipient}: -${amount:.2f}")
+  log_transaction(recipient, f"Transfer from {username}: +${amount:.2f}")
+  save_data()
+  print(f"${amount:.2f} transferred successfully to {recipient}.")
+def log_transaction(username, transaction):
+  timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+  log_entry = f"{timestamp} - {username}: {transaction}\n"
+  with open(TRANSACTION_LOG_FILE, 'a') as file:
+    file.write(log_entry)
+def authenticate():
+    ...
+    if user_data['password'] == hash_password(password):
+        print("Login successful.")
+        user_data['login_attempts'] = 0 # Reset the attempts on successful login
+        return username
+    else:
+        user_data['login_attempts'] += 1
+        print(f"Invalid password. {3 - user_data['login_attempts']} attempts remaining.")
+        if user_data['login_attempts'] >= 3:
+            user_data['is_blocked'] = True
+            user_data['blocked_until'] = time.time() + 10 # Block for 10 seconds
+            print("Your account has been temporarily blocked due to too many failed login attempts.")
+        save_data()
+        return None
+def create_account():
+  ...
+  if username.lower() == 'exit':
+    return
+  ...
+  if password.lower() == 'exit':
+    return
+def main():
+  while True:
+    print("\nMain Menu:")
+    print("1. Create Account")
+    print("2. Login")
+    print("3. Exit")
+
+    choice = input("Choose an option: ")
+
+    if choice == '1':
+      create_account()
+    elif choice == '2':
+      username = authenticate()
+    if username:
+      banking_menu(username)
+    elif choice == '3':
+      print("Exiting the system. Goodbye!")
+      save_data()
+      break
+    else:
+      print("Invalid choice. Please try again.")
+def banking_menu(username):
+  while True:
+    print("\nBanking Menu:")
+    print("1. Deposit")
+    print("2. Withdraw")
+    print("3. Check Balance")
+    print("4. Transfer")
+    print("5. Logout")
+
+    choice = input("Choose an option: ")
+
+    if choice == '1':
+      deposit(username)
+    elif choice == '2':
+      withdraw(username)
+    elif choice == '3':
+      check_balance(username)
+    elif choice == '4':
+      transfer(username)
+    elif choice == '5':
+      print("Logging out...")
+      break
+    else:
+      print("Invalid choice. Please try again.")
+# 3 login(username,password)
+def login(username, password):
+    if username in users:
+        user_data = users[username]
+        if user_data['password'] == hash_password(password):
+            if not user_data['is_blocked']:
+                user_data['login_attempts'] = 0
+                print("Login successful.")
+                return True
+            else:
+                if time.time() > user_data['blocked_until']:
+                    user_data['is_blocked'] = False
+                    user_data['login_attempts'] = 0
+                    print("Account unlocked. Please try logging in again.")
+                    return False
+                else:
+                    print(f"Account is locked. Try again later.")
+                    return False
+        else:
+            user_data['login_attempts'] += 1
+            if user_data['login_attempts'] >= 3:
+                account_lockout(username)
+            print("Invalid password.")
+            return False
+    else:
+        print("Username not found.")
+        return False
+# 4 account_lockout(username)
+def account_lockout(username):
+    user_data = users[username]
+    user_data['is_blocked'] = True
+    user_data['blocked_until'] = time.time() + 10  # Block for 10 seconds
+    print(f"Account for {username} has been temporarily blocked due to too many failed login attempts.")
+    save_data()
