@@ -4,10 +4,10 @@ import os
 import getpass
 import time
 import re
-"""# File to store user data"""
+# File to store user data
 DATABASE_FILE = 'banking_data.json'
 TRANSACTION_LOG_FILE = 'transaction_log.txt'
-"""# Load existing user data from file or create a new database"""
+# Load existing user data from file or create a new database
 if os.path.exists(DATABASE_FILE):
     with open(DATABASE_FILE, 'r') as file:
         users = json.load(file)
